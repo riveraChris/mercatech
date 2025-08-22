@@ -13,22 +13,26 @@
   let favoriteLoading = $state(false);
 
   // Check if listing is favorited by current user
-  $effect(async () => {
-    if ($auth.user) {
-      try {
-        const { data } = await supabase
-          .from('favorites')
-          .select('id')
-          .eq('user_id', $auth.user.id)
-          .eq('listing_id', listing.id)
-          .single();
-        
-        isFavorited = !!data;
-      } catch (error) {
-        // Not favorited or error
-        isFavorited = false;
+  $effect(() => {
+    async function checkFavoriteStatus() {
+      if ($auth.user) {
+        try {
+          const { data } = await supabase
+            .from('favorites')
+            .select('id')
+            .eq('user_id', $auth.user.id)
+            .eq('listing_id', listing.id)
+            .single();
+          
+          isFavorited = !!data;
+        } catch (error) {
+          // Not favorited or error
+          isFavorited = false;
+        }
       }
     }
+    
+    checkFavoriteStatus();
   });
 
   async function toggleFavorite() {
