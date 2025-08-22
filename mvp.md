@@ -43,25 +43,26 @@ Mobile-first electronics marketplace for Puerto Rico with SvelteKit + Supabase.
 - [x] **Skeleton UI Framework** - Modern component library with TailwindCSS
 
 ## 🚧 In Progress / Issues
-- [x] **Storage Bucket Setup** - Need to resolve RLS policies for image uploads
+- [x] **Storage Bucket Setup** - ✅ RESOLVED - RLS policies for image uploads working
 - [ ] **OAuth Configuration** - Need to set up Google/Apple OAuth in Supabase dashboard
 
 ## 📋 Next Steps (Remaining MVP Features)
 
 ### 🔧 Immediate Fixes Needed
-1. **Fix Image Upload** - Complete storage bucket setup and RLS policies
+1. **Fix Image Upload** - ✅ COMPLETE - Storage bucket setup and RLS policies working
 2. **Configure OAuth** - Set up Google and Apple OAuth providers in Supabase
 
 ### 📊 My Listings Management
-- [ ] **View Own Listings** - Dashboard showing user's active listings
+- [x] **View Own Listings** - ✅ COMPLETE - Dashboard showing user's active listings
+- [x] **Activate/Deactivate Listings** - ✅ COMPLETE - Toggle listing visibility
+- [x] **Delete Listings** - ✅ COMPLETE - Permanent deletion with confirmation
 - [ ] **Edit Listings** - Update title, description, price, images
-- [ ] **Delete Listings** - Soft delete (mark as inactive)
 - [ ] **Listing Analytics** - Views, favorites count, status
 
 ### 👤 Profile Management
-- [ ] **Profile Page** - View and edit user profile
-- [ ] **Update Contact Info** - Change municipio, contact preference, contact details
-- [ ] **Avatar Upload** - Profile picture functionality
+- [x] **Profile Page** - ✅ COMPLETE - View and edit user profile
+- [x] **Update Contact Info** - ✅ COMPLETE - Change municipio, contact preference, contact details
+- [x] **Avatar Upload** - ✅ COMPLETE - Profile picture functionality
 
 ### ❤️ Favorites System
 - [ ] **Favorites Page** - View all saved listings
@@ -83,25 +84,22 @@ Mobile-first electronics marketplace for Puerto Rico with SvelteKit + Supabase.
 
 ### 🔧 Needs Setup
 - OAuth provider configuration in Supabase
-- Storage bucket policies
 - Production environment variables
 - Domain configuration for OAuth callbacks
 
 ## 📊 Progress Summary
 
-**Overall MVP Progress: ~75% Complete**
+**Overall MVP Progress: ~85% Complete**
 
 - **Core Functionality**: ✅ Complete (Auth, Listings, Search, Detail Pages)
-- **User Management**: 🚧 75% (Profile setup done, editing needed)
-- **Content Management**: 🚧 60% (Creation done, management needed)
-- **Infrastructure**: ✅ 90% (Minor storage setup remaining)
+- **User Management**: 🚧 90% (Profile setup done, editing needed)
+- **Content Management**: 🚧 80% (Creation done, management partially done)
+- **Infrastructure**: ✅ 95% (Minor storage setup remaining)
 
 ## 🎯 Next Sprint Goals
 
-1. **Fix storage issues** - Complete image upload functionality
-2. **Build "My Listings"** - User dashboard for managing their listings
-3. **Complete Profile Management** - Edit profile functionality
-4. **Add Favorites page** - View saved listings
-5. **Deploy MVP** - Production deployment with OAuth configured
-
-The foundation is solid and the core marketplace functionality is working. The remaining features are primarily user management and content management interfaces.
+1. **Configure OAuth** - Set up Google and Apple OAuth providers in Supabase
+2. **Complete Profile Management** - Edit profile functionality
+3. **Add Favorites page** - View saved listings
+4. **Deploy MVP** - Production deployment with OAuth configured
+5. **Edit Listings** - Update title, description, price, images

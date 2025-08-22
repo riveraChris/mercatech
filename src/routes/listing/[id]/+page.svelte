@@ -157,8 +157,8 @@
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
     }).format(price);
   }
 
@@ -215,6 +215,31 @@
 </svelte:head>
 
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20 md:pb-6">
+  <!-- Back Navigation -->
+  <div class="flex items-center justify-between mb-6">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center space-x-2 text-sm text-surface-500">
+      <a href="/" class="hover:text-primary-600 transition-colors">Inicio</a>
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+      <span class="text-surface-900 font-medium">
+        {listing ? listing.title : 'Producto'}
+      </span>
+    </nav>
+
+    <!-- Back Button -->
+    <button 
+      onclick={() => window.history.back()}
+      class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-surface-700 bg-white border border-surface-200 rounded-lg hover:bg-surface-50 transition-colors"
+    >
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      </svg>
+      Volver
+    </button>
+  </div>
+
   {#if loading}
     <!-- Loading State -->
     <div class="animate-pulse">
@@ -236,7 +261,7 @@
       </div>
       <h3 class="text-lg font-semibold text-surface-900 mb-2">Producto no encontrado</h3>
       <p class="text-surface-600 mb-4">{error}</p>
-      <button on:click={() => goto('/')} class="btn variant-filled-primary">
+      <button onclick={() => goto('/')} class="btn variant-filled-primary">
         Volver al inicio
       </button>
     </div>
@@ -256,7 +281,7 @@
             <!-- Navigation Arrows -->
             {#if listing.images.length > 1}
               <button
-                on:click={prevImage}
+                onclick={prevImage}
                 class="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
               >
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -265,7 +290,7 @@
               </button>
               
               <button
-                on:click={nextImage}
+                onclick={nextImage}
                 class="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
               >
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -293,7 +318,7 @@
           <div class="flex space-x-2 overflow-x-auto pb-2">
             {#each listing.images as image, index}
               <button
-                on:click={() => selectImage(index)}
+                onclick={() => selectImage(index)}
                 class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 {index === currentImageIndex ? 'border-primary-500' : 'border-surface-200'} hover:border-primary-300 transition-colors"
               >
                 <img
@@ -331,7 +356,7 @@
               <div class="flex space-x-2">
                 <!-- Favorite Button -->
                 <button
-                  on:click={toggleFavorite}
+                  onclick={toggleFavorite}
                   disabled={favoriteLoading}
                   class="p-3 rounded-full border border-surface-300 hover:bg-surface-50 transition-colors disabled:opacity-50"
                 >
@@ -347,7 +372,7 @@
 
                 <!-- Report Button -->
                 <button
-                  on:click={() => showReportModal = true}
+                  onclick={() => showReportModal = true}
                   class="p-3 rounded-full border border-surface-300 hover:bg-surface-50 transition-colors"
                   title="Reportar publicación"
                 >
@@ -401,7 +426,7 @@
               <!-- Contact Button -->
               {#if $auth.user && $auth.user.id !== listing.user_id}
                 <button
-                  on:click={handleContact}
+                  onclick={handleContact}
                   class="btn variant-filled-primary"
                 >
                   <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -458,14 +483,14 @@
 
       <div class="flex justify-end space-x-3 mt-6">
         <button
-          on:click={() => showReportModal = false}
+          onclick={() => showReportModal = false}
           class="btn variant-outline-surface"
           disabled={reportLoading}
         >
           Cancelar
         </button>
         <button
-          on:click={submitReport}
+          onclick={submitReport}
           disabled={!reportReason.trim() || reportLoading}
           class="btn variant-filled-error"
         >
