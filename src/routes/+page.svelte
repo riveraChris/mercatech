@@ -3,19 +3,27 @@
   import { onMount } from 'svelte';
   import { supabase } from '$lib/supabaseClient';
   import { auth } from '$lib/stores/auth';
-  import { CATEGORIES, MUNICIPIOS } from '$lib/types';
+  import { CATEGORIES, MUNICIPIOS, CONDITIONS } from '$lib/types';
   import type { Listing } from '$lib/types';
   import ListingCard from '$lib/components/ListingCard.svelte';
 
-  let listings: Listing[] = [];
-  let loading = true;
-  let error = '';
+  let listings: Listing[] = $state([]);
+  let loading = $state(true);
+  let error = $state('');
   
-  // Filters
-  let searchQuery = '';
-  let selectedCategory = '';
-  let selectedMunicipio = '';
-  let sortBy = 'created_at';
+  // Enhanced filters
+  let searchQuery = $state('');
+  let selectedCategory = $state('');
+  let selectedCondition = $state('');
+  let selectedMunicipio = $state('');
+  let minPrice = $state<number | null>(null);
+  let maxPrice = $state<number | null>(null);
+  let sortBy = $state('newest'); // newest, oldest, price-low, price-high
+
+  // Get unique values for filters from current listings
+  let categories = $derived([...new Set(listings.map(l => l.category))].sort());
+  let conditions = $derived([...new Set(listings.map(l => l.condition))].sort());
+  let municipios = $derived([...new Set(listings.map(l => l.municipio))].sort());
 
   onMount(() => {
     loadListings();
@@ -39,8 +47,20 @@
         query = query.eq('category', selectedCategory);
       }
       
+      if (selectedCondition) {
+        query = query.eq('condition', selectedCondition);
+      }
+
       if (selectedMunicipio) {
         query = query.eq('municipio', selectedMunicipio);
+      }
+
+      if (minPrice !== null) {
+        query = query.gte('price', minPrice);
+      }
+
+      if (maxPrice !== null) {
+        query = query.lte('price', maxPrice);
       }
 
       if (searchQuery.trim()) {
@@ -48,12 +68,14 @@
       }
 
       // Apply sorting
-      if (sortBy === 'price_asc') {
-        query = query.order('price', { ascending: true });
-      } else if (sortBy === 'price_desc') {
-        query = query.order('price', { ascending: false });
-      } else {
+      if (sortBy === 'newest') {
         query = query.order('created_at', { ascending: false });
+      } else if (sortBy === 'oldest') {
+        query = query.order('created_at', { ascending: true });
+      } else if (sortBy === 'price-low') {
+        query = query.order('price', { ascending: true });
+      } else if (sortBy === 'price-high') {
+        query = query.order('price', { ascending: false });
       }
 
       const { data, error: fetchError } = await query.limit(50);
@@ -71,16 +93,32 @@
     }
   }
 
-  // Reactive statement to reload when filters change
-  $: if (searchQuery !== undefined || selectedCategory !== undefined || selectedMunicipio !== undefined || sortBy !== undefined) {
-    loadListings();
-  }
+  // Effect to reload when filters change
+  $effect(() => {
+    // Watch filter variables and reload listings when they change
+    searchQuery;
+    selectedCategory;
+    selectedCondition;
+    selectedMunicipio;
+    minPrice;
+    maxPrice;
+    sortBy;
+    
+    // Skip initial load (onMount handles that)
+    if (searchQuery !== '' || selectedCategory !== '' || selectedCondition !== '' || 
+        selectedMunicipio !== '' || minPrice !== null || maxPrice !== null || sortBy !== 'newest') {
+      loadListings();
+    }
+  });
 
   function clearFilters() {
     searchQuery = '';
     selectedCategory = '';
+    selectedCondition = '';
     selectedMunicipio = '';
-    sortBy = 'created_at';
+    minPrice = null;
+    maxPrice = null;
+    sortBy = 'newest';
   }
 </script>
 
@@ -116,38 +154,117 @@
           type="text"
           placeholder="Buscar productos..."
           bind:value={searchQuery}
-          class="input w-full pl-10"
+          class="w-full px-3 py-2 pl-10 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
         />
       </div>
 
-      <!-- Filters Row -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <select bind:value={selectedCategory} class="select">
-          <option value="">Todas las categorías</option>
-          {#each CATEGORIES as category}
-            <option value={category}>{category}</option>
-          {/each}
-        </select>
+      <!-- Filters Section -->
+      <div class="border-t border-surface-200 pt-4">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-medium text-surface-900">Filtros</h3>
+          <button 
+            onclick={clearFilters}
+            class="text-sm text-primary-600 hover:text-primary-700 font-medium"
+          >
+            Limpiar filtros
+          </button>
+        </div>
 
-        <select bind:value={selectedMunicipio} class="select">
-          <option value="">Todos los municipios</option>
-          {#each MUNICIPIOS as municipio}
-            <option value={municipio}>{municipio}</option>
-          {/each}
-        </select>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          <!-- Category Filter -->
+          <div>
+            <label class="block text-sm font-medium text-surface-700 mb-2">Categoría</label>
+            <select 
+              bind:value={selectedCategory}
+              class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option value="">Todas las categorías</option>
+              {#each CATEGORIES as category}
+                <option value={category}>{category}</option>
+              {/each}
+            </select>
+          </div>
 
-        <select bind:value={sortBy} class="select">
-          <option value="created_at">Más recientes</option>
-          <option value="price_asc">Precio: menor a mayor</option>
-          <option value="price_desc">Precio: mayor a menor</option>
-        </select>
+          <!-- Condition Filter -->
+          <div>
+            <label class="block text-sm font-medium text-surface-700 mb-2">Condición</label>
+            <select 
+              bind:value={selectedCondition}
+              class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option value="">Todas las condiciones</option>
+              {#each CONDITIONS as condition}
+                <option value={condition}>{condition}</option>
+              {/each}
+            </select>
+          </div>
 
-        <button
-          on:click={clearFilters}
-          class="btn variant-outline-surface"
-        >
-          Limpiar filtros
-        </button>
+          <!-- Municipality Filter -->
+          <div>
+            <label class="block text-sm font-medium text-surface-700 mb-2">Municipio</label>
+            <select 
+              bind:value={selectedMunicipio}
+              class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option value="">Todos los municipios</option>
+              {#each MUNICIPIOS as municipio}
+                <option value={municipio}>{municipio}</option>
+              {/each}
+            </select>
+          </div>
+
+          <!-- Price Range -->
+          <div>
+            <label class="block text-sm font-medium text-surface-700 mb-2">Precio mínimo</label>
+            <input 
+              type="number" 
+              bind:value={minPrice}
+              placeholder="$0"
+              class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-surface-700 mb-2">Precio máximo</label>
+            <input 
+              type="number" 
+              bind:value={maxPrice}
+              placeholder="Sin límite"
+              class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+
+        <!-- Sort Options -->
+        <div class="mt-4 pt-4 border-t border-surface-200">
+          <label class="block text-sm font-medium text-surface-700 mb-2">Ordenar por</label>
+          <div class="flex flex-wrap gap-2">
+            <button 
+              onclick={() => sortBy = 'newest'}
+              class="px-3 py-1 text-sm rounded-full border transition-colors {sortBy === 'newest' ? 'bg-primary-100 border-primary-300 text-primary-700' : 'bg-white border-surface-300 text-surface-700 hover:bg-surface-50'}"
+            >
+              Más recientes
+            </button>
+            <button 
+              onclick={() => sortBy = 'oldest'}
+              class="px-3 py-1 text-sm rounded-full border transition-colors {sortBy === 'oldest' ? 'bg-primary-100 border-primary-300 text-primary-700' : 'bg-white border-surface-300 text-surface-700 hover:bg-surface-50'}"
+            >
+              Más antiguos
+            </button>
+            <button 
+              onclick={() => sortBy = 'price-low'}
+              class="px-3 py-1 text-sm rounded-full border transition-colors {sortBy === 'price-low' ? 'bg-primary-100 border-primary-300 text-primary-700' : 'bg-white border-surface-300 text-surface-700 hover:bg-surface-50'}"
+            >
+              Precio: menor a mayor
+            </button>
+            <button 
+              onclick={() => sortBy = 'price-high'}
+              class="px-3 py-1 text-sm rounded-full border transition-colors {sortBy === 'price-high' ? 'bg-primary-100 border-primary-300 text-primary-700' : 'bg-white border-surface-300 text-surface-700 hover:bg-surface-50'}"
+            >
+              Precio: mayor a menor
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -155,7 +272,7 @@
   <!-- Results Header -->
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-xl font-semibold text-surface-900">
-      {#if searchQuery || selectedCategory || selectedMunicipio}
+      {#if searchQuery || selectedCategory || selectedCondition || selectedMunicipio || minPrice !== null || maxPrice !== null}
         Resultados de búsqueda
       {:else}
         Productos destacados
@@ -190,7 +307,7 @@
       </div>
       <h3 class="text-lg font-semibold text-surface-900 mb-2">Error al cargar productos</h3>
       <p class="text-surface-600 mb-4">{error}</p>
-      <button on:click={loadListings} class="btn variant-filled-primary">
+      <button onclick={loadListings} class="btn variant-filled-primary">
         Intentar de nuevo
       </button>
     </div>
@@ -204,7 +321,7 @@
       </div>
       <h3 class="text-lg font-semibold text-surface-900 mb-2">No se encontraron productos</h3>
       <p class="text-surface-600 mb-4">
-        {#if searchQuery || selectedCategory || selectedMunicipio}
+        {#if searchQuery || selectedCategory || selectedCondition || selectedMunicipio || minPrice !== null || maxPrice !== null}
           Intenta ajustar tus filtros de búsqueda.
         {:else}
           Sé el primero en publicar un producto.
