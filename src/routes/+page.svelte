@@ -1,348 +1,188 @@
-<!-- Home Feed -->
+<!-- Landing Page -->
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { supabase } from '$lib/supabaseClient';
   import { auth } from '$lib/stores/auth';
-  import { CATEGORIES, MUNICIPIOS, CONDITIONS } from '$lib/types';
-  import type { Listing } from '$lib/types';
-  import ListingCard from '$lib/components/ListingCard.svelte';
+  import { goto } from '$app/navigation';
+  import Logo from '$lib/components/Logo.svelte';
 
-  let listings: Listing[] = $state([]);
-  let loading = $state(true);
-  let error = $state('');
-  
-  // Enhanced filters
-  let searchQuery = $state('');
-  let selectedCategory = $state('');
-  let selectedCondition = $state('');
-  let selectedMunicipio = $state('');
-  let minPrice = $state<number | null>(null);
-  let maxPrice = $state<number | null>(null);
-  let sortBy = $state('newest'); // newest, oldest, price-low, price-high
-
-  // Get unique values for filters from current listings
-  let categories = $derived([...new Set(listings.map(l => l.category))].sort());
-  let conditions = $derived([...new Set(listings.map(l => l.condition))].sort());
-  let municipios = $derived([...new Set(listings.map(l => l.municipio))].sort());
-
+  // Redirect authenticated users to app
   onMount(() => {
-    loadListings();
+    const unsubscribe = auth.subscribe(($auth) => {
+      if (!$auth.loading && $auth.user && $auth.profile) {
+        goto('/app');
+      }
+    });
+
+    return unsubscribe;
   });
 
-  async function loadListings() {
-    try {
-      loading = true;
-      error = '';
-
-      let query = supabase
-        .from('listings')
-        .select(`
-          *,
-          profile:profiles(display_name, municipio, contact_preference, contact_info)
-        `)
-        .eq('is_active', true);
-
-      // Apply filters
-      if (selectedCategory) {
-        query = query.eq('category', selectedCategory);
-      }
-      
-      if (selectedCondition) {
-        query = query.eq('condition', selectedCondition);
-      }
-
-      if (selectedMunicipio) {
-        query = query.eq('municipio', selectedMunicipio);
-      }
-
-      if (minPrice !== null) {
-        query = query.gte('price', minPrice);
-      }
-
-      if (maxPrice !== null) {
-        query = query.lte('price', maxPrice);
-      }
-
-      if (searchQuery.trim()) {
-        query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
-      }
-
-      // Apply sorting
-      if (sortBy === 'newest') {
-        query = query.order('created_at', { ascending: false });
-      } else if (sortBy === 'oldest') {
-        query = query.order('created_at', { ascending: true });
-      } else if (sortBy === 'price-low') {
-        query = query.order('price', { ascending: true });
-      } else if (sortBy === 'price-high') {
-        query = query.order('price', { ascending: false });
-      }
-
-      const { data, error: fetchError } = await query.limit(50);
-
-      if (fetchError) {
-        throw fetchError;
-      }
-
-      listings = data || [];
-    } catch (err: any) {
-      error = err.message || 'Error loading listings';
-      console.error('Error loading listings:', err);
-    } finally {
-      loading = false;
+  const features = [
+    {
+      icon: '📱',
+      title: 'Móvil Primero',
+      description: 'Diseñado específicamente para dispositivos móviles con una experiencia fluida.'
+    },
+    {
+      icon: '🔒',
+      title: 'Seguro y Confiable',
+      description: 'Autenticación segura y perfiles verificados para transacciones confiables.'
+    },
+    {
+      icon: '🏝️',
+      title: 'Enfoque Local',
+      description: 'Especializado en Puerto Rico con todos los 78 municipios disponibles.'
+    },
+    {
+      icon: '⚡',
+      title: 'Rápido y Fácil',
+      description: 'Publica y encuentra productos en segundos con nuestra interfaz intuitiva.'
     }
-  }
+  ];
 
-  // Effect to reload when filters change
-  $effect(() => {
-    // Watch filter variables and reload listings when they change
-    searchQuery;
-    selectedCategory;
-    selectedCondition;
-    selectedMunicipio;
-    minPrice;
-    maxPrice;
-    sortBy;
-    
-    // Skip initial load (onMount handles that)
-    if (searchQuery !== '' || selectedCategory !== '' || selectedCondition !== '' || 
-        selectedMunicipio !== '' || minPrice !== null || maxPrice !== null || sortBy !== 'newest') {
-      loadListings();
-    }
-  });
-
-  function clearFilters() {
-    searchQuery = '';
-    selectedCategory = '';
-    selectedCondition = '';
-    selectedMunicipio = '';
-    minPrice = null;
-    maxPrice = null;
-    sortBy = 'newest';
-  }
+  const stats = [
+    { number: '1000+', label: 'Productos Activos' },
+    { number: '500+', label: 'Usuarios Registrados' },
+    { number: '78', label: 'Municipios Cubiertos' },
+    { number: '24/7', label: 'Disponibilidad' }
+  ];
 </script>
 
 <svelte:head>
-  <title>MercaTech - Electrónicos en Puerto Rico</title>
+  <title>MercaTech - El Marketplace de Electrónicos #1 en Puerto Rico</title>
+  <meta name="description" content="Compra y vende electrónicos de forma segura en Puerto Rico. Miles de productos, precios competitivos, y transacciones confiables." />
 </svelte:head>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20 md:pb-6">
-  <!-- Welcome Section -->
-  {#if !$auth.user}
-    <div class="bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl p-8 text-white mb-8">
-      <div class="max-w-2xl">
-        <h1 class="text-3xl font-bold mb-4">Bienvenido a MercaTech</h1>
-        <p class="text-lg mb-6 opacity-90">
-          El marketplace líder de electrónicos en Puerto Rico. Compra y vende dispositivos de forma segura.
-        </p>
-        <a href="/auth" class="btn variant-filled bg-white text-primary-600 hover:bg-surface-50">
+<!-- Hero Section -->
+<div class="bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 min-h-screen flex items-center">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="text-center text-white">
+      <!-- Logo -->
+      <div class="mb-8">
+        <Logo size="xl" variant="light" />
+      </div>
+      
+      <h1 class="text-4xl md:text-6xl font-bold mb-6">
+        <span class="bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+          MercaTech
+        </span>
+      </h1>
+      
+      <p class="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
+        El marketplace #1 de electrónicos en Puerto Rico
+      </p>
+      
+      <p class="text-lg mb-12 text-blue-200 max-w-2xl mx-auto">
+        Compra y vende dispositivos electrónicos de forma segura. Miles de productos, precios competitivos, y transacciones confiables en toda la isla.
+      </p>
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/auth" class="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-blue-50 transition-colors shadow-lg">
           Comenzar Ahora
         </a>
-      </div>
-    </div>
-  {/if}
-
-  <!-- Search and Filters -->
-  <div class="bg-white rounded-xl shadow-sm border border-surface-200 p-6 mb-6">
-    <div class="space-y-4">
-      <!-- Search Bar -->
-      <div class="relative">
-        <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-surface-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-        <input
-          type="text"
-          placeholder="Buscar productos..."
-          bind:value={searchQuery}
-          class="w-full px-3 py-2 pl-10 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-        />
-      </div>
-
-      <!-- Filters Section -->
-      <div class="border-t border-surface-200 pt-4">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-medium text-surface-900">Filtros</h3>
-          <button 
-            onclick={clearFilters}
-            class="text-sm text-primary-600 hover:text-primary-700 font-medium"
-          >
-            Limpiar filtros
-          </button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          <!-- Category Filter -->
-          <div>
-            <label class="block text-sm font-medium text-surface-700 mb-2">Categoría</label>
-            <select 
-              bind:value={selectedCategory}
-              class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            >
-              <option value="">Todas las categorías</option>
-              {#each CATEGORIES as category}
-                <option value={category}>{category}</option>
-              {/each}
-            </select>
-          </div>
-
-          <!-- Condition Filter -->
-          <div>
-            <label class="block text-sm font-medium text-surface-700 mb-2">Condición</label>
-            <select 
-              bind:value={selectedCondition}
-              class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            >
-              <option value="">Todas las condiciones</option>
-              {#each CONDITIONS as condition}
-                <option value={condition}>{condition}</option>
-              {/each}
-            </select>
-          </div>
-
-          <!-- Municipality Filter -->
-          <div>
-            <label class="block text-sm font-medium text-surface-700 mb-2">Municipio</label>
-            <select 
-              bind:value={selectedMunicipio}
-              class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            >
-              <option value="">Todos los municipios</option>
-              {#each MUNICIPIOS as municipio}
-                <option value={municipio}>{municipio}</option>
-              {/each}
-            </select>
-          </div>
-
-          <!-- Price Range -->
-          <div>
-            <label class="block text-sm font-medium text-surface-700 mb-2">Precio mínimo</label>
-            <input 
-              type="number" 
-              bind:value={minPrice}
-              placeholder="$0"
-              class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-surface-700 mb-2">Precio máximo</label>
-            <input 
-              type="number" 
-              bind:value={maxPrice}
-              placeholder="Sin límite"
-              class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-          </div>
-        </div>
-
-        <!-- Sort Options -->
-        <div class="mt-4 pt-4 border-t border-surface-200">
-          <label class="block text-sm font-medium text-surface-700 mb-2">Ordenar por</label>
-          <div class="flex flex-wrap gap-2">
-            <button 
-              onclick={() => sortBy = 'newest'}
-              class="px-3 py-1 text-sm rounded-full border transition-colors {sortBy === 'newest' ? 'bg-primary-100 border-primary-300 text-primary-700' : 'bg-white border-surface-300 text-surface-700 hover:bg-surface-50'}"
-            >
-              Más recientes
-            </button>
-            <button 
-              onclick={() => sortBy = 'oldest'}
-              class="px-3 py-1 text-sm rounded-full border transition-colors {sortBy === 'oldest' ? 'bg-primary-100 border-primary-300 text-primary-700' : 'bg-white border-surface-300 text-surface-700 hover:bg-surface-50'}"
-            >
-              Más antiguos
-            </button>
-            <button 
-              onclick={() => sortBy = 'price-low'}
-              class="px-3 py-1 text-sm rounded-full border transition-colors {sortBy === 'price-low' ? 'bg-primary-100 border-primary-300 text-primary-700' : 'bg-white border-surface-300 text-surface-700 hover:bg-surface-50'}"
-            >
-              Precio: menor a mayor
-            </button>
-            <button 
-              onclick={() => sortBy = 'price-high'}
-              class="px-3 py-1 text-sm rounded-full border transition-colors {sortBy === 'price-high' ? 'bg-primary-100 border-primary-300 text-primary-700' : 'bg-white border-surface-300 text-surface-700 hover:bg-surface-50'}"
-            >
-              Precio: mayor a menor
-            </button>
-          </div>
-        </div>
+        <a href="/app" class="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 transition-colors">
+          Explorar Productos
+        </a>
       </div>
     </div>
   </div>
-
-  <!-- Results Header -->
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-xl font-semibold text-surface-900">
-      {#if searchQuery || selectedCategory || selectedCondition || selectedMunicipio || minPrice !== null || maxPrice !== null}
-        Resultados de búsqueda
-      {:else}
-        Productos destacados
-      {/if}
-      {#if !loading}
-        <span class="text-surface-500 font-normal">({listings.length})</span>
-      {/if}
-    </h2>
-  </div>
-
-  <!-- Loading State -->
-  {#if loading}
-    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      {#each Array(8) as _}
-        <div class="bg-white rounded-xl shadow-sm border border-surface-200 p-4 animate-pulse">
-          <div class="bg-surface-200 h-48 rounded-lg mb-4"></div>
-          <div class="space-y-2">
-            <div class="bg-surface-200 h-4 rounded w-3/4"></div>
-            <div class="bg-surface-200 h-4 rounded w-1/2"></div>
-            <div class="bg-surface-200 h-6 rounded w-1/3"></div>
-          </div>
-        </div>
-      {/each}
-    </div>
-  {:else if error}
-    <!-- Error State -->
-    <div class="text-center py-12">
-      <div class="mx-auto h-16 w-16 rounded-full bg-error-100 flex items-center justify-center mb-4">
-        <svg class="h-8 w-8 text-error-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </div>
-      <h3 class="text-lg font-semibold text-surface-900 mb-2">Error al cargar productos</h3>
-      <p class="text-surface-600 mb-4">{error}</p>
-      <button onclick={loadListings} class="btn variant-filled-primary">
-        Intentar de nuevo
-      </button>
-    </div>
-  {:else if listings.length === 0}
-    <!-- Empty State -->
-    <div class="text-center py-12">
-      <div class="mx-auto h-16 w-16 rounded-full bg-surface-100 flex items-center justify-center mb-4">
-        <svg class="h-8 w-8 text-surface-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      </div>
-      <h3 class="text-lg font-semibold text-surface-900 mb-2">No se encontraron productos</h3>
-      <p class="text-surface-600 mb-4">
-        {#if searchQuery || selectedCategory || selectedCondition || selectedMunicipio || minPrice !== null || maxPrice !== null}
-          Intenta ajustar tus filtros de búsqueda.
-        {:else}
-          Sé el primero en publicar un producto.
-        {/if}
-      </p>
-      {#if $auth.user && $auth.profile}
-        <a href="/post" class="btn variant-filled-primary">
-          Publicar Producto
-        </a>
-      {:else}
-        <a href="/auth" class="btn variant-filled-primary">
-          Iniciar Sesión
-        </a>
-      {/if}
-    </div>
-  {:else}
-    <!-- Listings Grid -->
-    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      {#each listings as listing (listing.id)}
-        <ListingCard {listing} />
-      {/each}
-    </div>
-  {/if}
 </div>
+
+<!-- Features Section -->
+<div class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        ¿Por qué elegir MercaTech?
+      </h2>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        La plataforma más confiable y fácil de usar para comprar y vender electrónicos en Puerto Rico.
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {#each features as feature}
+        <div class="text-center p-6 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
+          <div class="text-4xl mb-4">{feature.icon}</div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
+          <p class="text-gray-600">{feature.description}</p>
+        </div>
+      {/each}
+    </div>
+  </div>
+</div>
+
+<!-- Stats Section -->
+<div class="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+        Números que hablan por sí solos
+      </h2>
+    </div>
+    
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+      {#each stats as stat}
+        <div class="text-center">
+          <div class="text-4xl md:text-5xl font-bold text-white mb-2">{stat.number}</div>
+          <div class="text-blue-200 text-lg">{stat.label}</div>
+        </div>
+      {/each}
+    </div>
+  </div>
+</div>
+
+<!-- How it Works Section -->
+<div class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        Cómo funciona
+      </h2>
+      <p class="text-xl text-gray-600">
+        Tres pasos simples para comenzar a comprar o vender
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div class="text-center">
+        <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+          <span class="text-2xl font-bold text-blue-600">1</span>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-3">Regístrate</h3>
+        <p class="text-gray-600">Crea tu cuenta de forma rápida y segura con Google.</p>
+      </div>
+      
+      <div class="text-center">
+        <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+          <span class="text-2xl font-bold text-purple-600">2</span>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-3">Explora o Publica</h3>
+        <p class="text-gray-600">Busca productos increíbles o publica los tuyos en minutos.</p>
+      </div>
+      
+      <div class="text-center">
+        <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+          <span class="text-2xl font-bold text-green-600">3</span>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-3">Conecta y Compra</h3>
+        <p class="text-gray-600">Contacta directamente con vendedores y realiza transacciones seguras.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA Section -->
+<div class="py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
+      ¿Listo para comenzar?
+    </h2>
+    <p class="text-xl text-blue-200 mb-8">
+      Únete a miles de puertorriqueños que ya confían en MercaTech para sus compras y ventas de electrónicos.
+    </p>
+    <a href="/auth" class="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-blue-50 transition-colors shadow-lg inline-block">
+      Crear Cuenta Gratis
+    </a>
+  </div>
+</div>
+

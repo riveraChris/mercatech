@@ -3,6 +3,7 @@
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
   import { auth } from '$lib/stores/auth';
+  import Logo from '$lib/components/Logo.svelte';
 
   let loading = false;
   let error = '';
@@ -50,12 +51,9 @@
     <div class="rounded-2xl bg-white p-8 shadow-xl">
       <!-- Logo and Title -->
       <div class="text-center mb-8">
-        <div class="mx-auto h-16 w-16 rounded-full bg-primary-500 flex items-center justify-center mb-4">
-          <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-          </svg>
+        <div class="flex justify-center mb-4">
+          <Logo size="lg" variant="color" />
         </div>
-        <h1 class="text-3xl font-bold text-surface-900">MercaTech</h1>
         <p class="text-surface-600 mt-2">Tu marketplace de electrónicos en Puerto Rico</p>
       </div>
 
@@ -91,6 +89,8 @@
           Continuar con Google
         </button>
 
+        <!-- Apple OAuth temporarily disabled -->
+        <!-- 
         <button
           on:click={signInWithApple}
           disabled={loading}
@@ -105,6 +105,7 @@
           {/if}
           Continuar con Apple
         </button>
+        -->
       </div>
 
       <!-- Terms -->

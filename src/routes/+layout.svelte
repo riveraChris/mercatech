@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import favicon from '$lib/assets/favicon.svg';
+	import Logo from '$lib/components/Logo.svelte';
 
 	let { children } = $props();
 	let dropdownOpen = $state(false);
@@ -65,13 +66,8 @@
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div class="flex justify-between items-center h-16">
 					<!-- Logo -->
-					<a href="/" class="flex items-center space-x-2">
-						<div class="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center">
-							<svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-							</svg>
-						</div>
-						<span class="text-xl font-bold text-surface-900">MercaTech</span>
+					<a href="/app" class="flex items-center">
+						<Logo size="sm" variant="color" />
 					</a>
 
 					<!-- User Menu -->
