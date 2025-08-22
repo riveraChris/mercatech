@@ -9,6 +9,53 @@
   let loading = $state(true);
   let error = $state('');
 
+  // Filter states
+  let selectedCategory = $state('');
+  let selectedCondition = $state('');
+  let selectedMunicipio = $state('');
+  let minPrice = $state<number | null>(null);
+  let maxPrice = $state<number | null>(null);
+  let sortBy = $state('newest'); // newest, oldest, price-low, price-high
+
+  // Get unique values for filters
+  let categories = $derived([...new Set(favorites.map(f => f.category))].sort());
+  let conditions = $derived([...new Set(favorites.map(f => f.condition))].sort());
+  let municipios = $derived([...new Set(favorites.map(f => f.municipio))].sort());
+
+  // Filtered and sorted favorites
+  let filteredFavorites = $derived.by(() => {
+    let filtered = favorites.filter(listing => {
+      if (selectedCategory && listing.category !== selectedCategory) return false;
+      if (selectedCondition && listing.condition !== selectedCondition) return false;
+      if (selectedMunicipio && listing.municipio !== selectedMunicipio) return false;
+      if (minPrice !== null && listing.price < minPrice) return false;
+      if (maxPrice !== null && listing.price > maxPrice) return false;
+      return true;
+    });
+
+    // Sort the filtered results
+    switch (sortBy) {
+      case 'oldest':
+        return filtered.sort((a, b) => new Date(a.favorited_at).getTime() - new Date(b.favorited_at).getTime());
+      case 'price-low':
+        return filtered.sort((a, b) => a.price - b.price);
+      case 'price-high':
+        return filtered.sort((a, b) => b.price - a.price);
+      case 'newest':
+      default:
+        return filtered.sort((a, b) => new Date(b.favorited_at).getTime() - new Date(a.favorited_at).getTime());
+    }
+  });
+
+  function clearFilters() {
+    selectedCategory = '';
+    selectedCondition = '';
+    selectedMunicipio = '';
+    minPrice = null;
+    maxPrice = null;
+    sortBy = 'newest';
+  }
+
   onMount(() => {
     const unsubscribe = auth.subscribe(({ user }) => {
       if (user) {
@@ -173,10 +220,121 @@
     <h2 class="text-xl font-semibold text-surface-900">
       Tus productos favoritos
       {#if !loading}
-        <span class="text-surface-500 font-normal">({favorites.length})</span>
+        <span class="text-surface-500 font-normal">({filteredFavorites.length})</span>
       {/if}
     </h2>
   </div>
+
+  <!-- Filters Section -->
+  {#if !loading && favorites.length > 0}
+    <div class="bg-white rounded-xl border border-surface-200 p-4 mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-medium text-surface-900">Filtros</h3>
+        <button 
+          onclick={clearFilters}
+          class="text-sm text-primary-600 hover:text-primary-700 font-medium"
+        >
+          Limpiar filtros
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+        <!-- Category Filter -->
+        <div>
+          <label class="block text-sm font-medium text-surface-700 mb-2">Categoría</label>
+          <select 
+            bind:value={selectedCategory}
+            class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          >
+            <option value="">Todas las categorías</option>
+            {#each categories as category}
+              <option value={category}>{category}</option>
+            {/each}
+          </select>
+        </div>
+
+        <!-- Condition Filter -->
+        <div>
+          <label class="block text-sm font-medium text-surface-700 mb-2">Condición</label>
+          <select 
+            bind:value={selectedCondition}
+            class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          >
+            <option value="">Todas las condiciones</option>
+            {#each conditions as condition}
+              <option value={condition}>{condition}</option>
+            {/each}
+          </select>
+        </div>
+
+        <!-- Municipality Filter -->
+        <div>
+          <label class="block text-sm font-medium text-surface-700 mb-2">Municipio</label>
+          <select 
+            bind:value={selectedMunicipio}
+            class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          >
+            <option value="">Todos los municipios</option>
+            {#each municipios as municipio}
+              <option value={municipio}>{municipio}</option>
+            {/each}
+          </select>
+        </div>
+
+        <!-- Price Range -->
+        <div>
+          <label class="block text-sm font-medium text-surface-700 mb-2">Precio mínimo</label>
+          <input 
+            type="number" 
+            bind:value={minPrice}
+            placeholder="$0"
+            class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-surface-700 mb-2">Precio máximo</label>
+          <input 
+            type="number" 
+            bind:value={maxPrice}
+            placeholder="Sin límite"
+            class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          />
+        </div>
+      </div>
+
+      <!-- Sort Options -->
+      <div class="mt-4 pt-4 border-t border-surface-200">
+        <label class="block text-sm font-medium text-surface-700 mb-2">Ordenar por</label>
+        <div class="flex flex-wrap gap-2">
+          <button 
+            onclick={() => sortBy = 'newest'}
+            class="px-3 py-1 text-sm rounded-full border transition-colors {sortBy === 'newest' ? 'bg-primary-100 border-primary-300 text-primary-700' : 'bg-white border-surface-300 text-surface-700 hover:bg-surface-50'}"
+          >
+            Más recientes
+          </button>
+          <button 
+            onclick={() => sortBy = 'oldest'}
+            class="px-3 py-1 text-sm rounded-full border transition-colors {sortBy === 'oldest' ? 'bg-primary-100 border-primary-300 text-primary-700' : 'bg-white border-surface-300 text-surface-700 hover:bg-surface-50'}"
+          >
+            Más antiguos
+          </button>
+          <button 
+            onclick={() => sortBy = 'price-low'}
+            class="px-3 py-1 text-sm rounded-full border transition-colors {sortBy === 'price-low' ? 'bg-primary-100 border-primary-300 text-primary-700' : 'bg-white border-surface-300 text-surface-700 hover:bg-surface-50'}"
+          >
+            Precio: menor a mayor
+          </button>
+          <button 
+            onclick={() => sortBy = 'price-high'}
+            class="px-3 py-1 text-sm rounded-full border transition-colors {sortBy === 'price-high' ? 'bg-primary-100 border-primary-300 text-primary-700' : 'bg-white border-surface-300 text-surface-700 hover:bg-surface-50'}"
+          >
+            Precio: mayor a menor
+          </button>
+        </div>
+      </div>
+    </div>
+  {/if}
 
   <!-- Loading State -->
   {#if loading}
@@ -206,7 +364,7 @@
         Intentar de nuevo
       </button>
     </div>
-  {:else if favorites.length === 0}
+  {:else if filteredFavorites.length === 0}
     <!-- Empty State -->
     <div class="text-center py-12">
       <div class="mx-auto h-16 w-16 rounded-full bg-surface-100 flex items-center justify-center mb-4">
@@ -228,7 +386,7 @@
   {:else}
     <!-- Favorites Grid -->
     <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      {#each favorites as listing (listing.id)}
+      {#each filteredFavorites as listing (listing.id)}
         <a href="/listing/{listing.id}" class="block group">
           <div class="bg-white rounded-xl shadow-sm border border-surface-200 overflow-hidden hover:shadow-md transition-shadow">
             <!-- Image -->
@@ -295,7 +453,7 @@
               <div class="flex items-center justify-between text-sm text-surface-500 mb-3">
                 <div class="flex items-center">
                   <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   <span class="truncate">{listing.municipio}</span>
