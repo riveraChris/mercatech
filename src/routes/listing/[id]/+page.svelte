@@ -134,7 +134,8 @@
           reporter_id: $auth.user.id,
           listing_id: listing.id,
           reason: reportReason.trim(),
-          description: reportDescription.trim() || null
+          description: reportDescription.trim() || null,
+          status: 'pending'
         });
 
       if (error) throw error;
@@ -144,7 +145,7 @@
       reportDescription = '';
       
       // Show success message
-      alert('Reporte enviado exitosamente. Revisaremos tu reporte pronto.');
+      alert('Reporte enviado exitosamente. Los administradores han sido notificados y revisarán tu reporte pronto.');
     } catch (error) {
       console.error('Error submitting report:', error);
       alert('Error al enviar el reporte. Inténtalo de nuevo.');
@@ -280,20 +281,20 @@
             
             <!-- Navigation Arrows -->
             {#if listing.images.length > 1}
-              <button
+              <button 
+                aria-label="Imagen anterior"
                 onclick={prevImage}
                 class="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
-                aria-label="Imagen anterior"
               >
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
               
-              <button
+              <button 
+                aria-label="Siguiente imagen"
                 onclick={nextImage}
                 class="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
-                aria-label="Siguiente imagen"
               >
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -357,7 +358,8 @@
             {#if $auth.user && $auth.user.id !== listing.user_id}
               <div class="flex space-x-2">
                 <!-- Favorite Button -->
-                <button
+                <button 
+                  aria-label="Agregar a favoritos"
                   onclick={toggleFavorite}
                   disabled={favoriteLoading}
                   class="p-3 rounded-full border border-surface-300 hover:bg-surface-50 transition-colors disabled:opacity-50"
@@ -458,10 +460,10 @@
       
       <div class="space-y-4">
         <div>
-          <label for="report-reason" class="block text-sm font-medium text-surface-700 mb-2">
+          <label for="reportReason" class="block text-sm font-medium text-surface-700 mb-2">
             Razón del reporte *
           </label>
-          <select bind:value={reportReason} class="select w-full" required>
+          <select bind:value={reportReason} id="reportReason" class="select w-full" required>
             <option value="">Selecciona una razón</option>
             <option value="Producto falso">Producto falso</option>
             <option value="Precio sospechoso">Precio sospechoso</option>
@@ -472,7 +474,7 @@
         </div>
 
         <div>
-          <label for="report-description" class="block text-sm font-medium text-surface-700 mb-2">
+          <label for="reportDescription" class="block text-sm font-medium text-surface-700 mb-2">
             Descripción adicional
           </label>
           <textarea

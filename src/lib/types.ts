@@ -45,6 +45,7 @@ export interface Listing {
   municipio: Municipio;
   images: string[];
   is_active: boolean;
+  is_sold: boolean;
   created_at: string;
   updated_at: string;
   // Joined data

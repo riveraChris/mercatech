@@ -171,6 +171,112 @@
   </div>
 </div>
 
+<!-- Roadmap Section -->
+<div class="py-20 bg-gray-50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        Próximas Funcionalidades
+      </h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Estamos constantemente mejorando MercaTech. Estas son algunas de las funciones que vienen pronto.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <div class="bg-blue-100 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
+          <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Chat en Tiempo Real</h3>
+        <p class="text-gray-600 text-sm">Mensajería instantánea entre compradores y vendedores para negociaciones más rápidas.</p>
+        <div class="mt-4">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+            Q1 2025
+          </span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <div class="bg-green-100 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
+          <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Verificación de Vendedores</h3>
+        <p class="text-gray-600 text-sm">Sistema de verificación de identidad para mayor confianza en las transacciones.</p>
+        <div class="mt-4">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            Q2 2025
+          </span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <div class="bg-purple-100 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
+          <svg class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Pagos Integrados</h3>
+        <p class="text-gray-600 text-sm">Procesamiento de pagos seguro directamente en la plataforma con ATH Móvil y tarjetas.</p>
+        <div class="mt-4">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+            Q2 2025
+          </span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <div class="bg-yellow-100 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
+          <svg class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Sistema de Reseñas</h3>
+        <p class="text-gray-600 text-sm">Calificaciones y comentarios de compradores para construir reputación de vendedores.</p>
+        <div class="mt-4">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+            Q3 2025
+          </span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <div class="bg-red-100 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
+          <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.828 7l6.586 6.586a2 2 0 002.828 0L20.828 7M9 3h6v4H9V3z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Entrega a Domicilio</h3>
+        <p class="text-gray-600 text-sm">Servicio de entrega coordinado con mensajeros locales para mayor comodidad.</p>
+        <div class="mt-4">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+            Q3 2025
+          </span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <div class="bg-indigo-100 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
+          <svg class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">App Móvil Nativa</h3>
+        <p class="text-gray-600 text-sm">Aplicación móvil dedicada para iOS y Android con notificaciones push.</p>
+        <div class="mt-4">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+            Q4 2025
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- CTA Section -->
 <div class="py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

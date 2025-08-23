@@ -132,10 +132,10 @@
       <!-- Favorite Button -->
       {#if $auth.user && $auth.user.id !== listing.user_id}
         <button
-          onclick={toggleFavorite}
+          onclick={(e) => {toggleFavorite(e); }}
           disabled={favoriteLoading}
+          aria-label={isFavorited ? 'Remover de favoritos' : 'Agregar a favoritos'}
           class="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors disabled:opacity-50"
-          aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
         >
           <svg
             class="h-5 w-5 {isFavorited ? 'text-error-500 fill-current' : 'text-surface-600'}"
@@ -183,11 +183,19 @@
       <!-- Seller Info -->
       {#if listing.profile}
         <div class="flex items-center text-sm text-surface-600">
-          <div class="h-6 w-6 rounded-full bg-primary-100 flex items-center justify-center mr-2">
-            <span class="text-xs font-medium text-primary-700">
-              {listing.profile.display_name.charAt(0).toUpperCase()}
-            </span>
-          </div>
+          {#if listing.profile.avatar_url}
+            <img 
+              src={listing.profile.avatar_url} 
+              alt={listing.profile.display_name}
+              class="h-6 w-6 rounded-full object-cover mr-2"
+            />
+          {:else}
+            <div class="h-6 w-6 rounded-full bg-primary-100 flex items-center justify-center mr-2">
+              <span class="text-xs font-medium text-primary-700">
+                {listing.profile.display_name.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          {/if}
           <span class="truncate">{listing.profile.display_name}</span>
         </div>
       {/if}

@@ -75,6 +75,26 @@
     }
   }
 
+  async function toggleSoldStatus(listingId: string, currentSoldStatus: boolean) {
+    try {
+      const { error: updateError } = await supabase
+        .from('listings')
+        .update({ is_sold: !currentSoldStatus })
+        .eq('id', listingId);
+
+      if (updateError) throw updateError;
+
+      // Update local state
+      listings = listings.map(listing => 
+        listing.id === listingId 
+          ? { ...listing, is_sold: !currentSoldStatus }
+          : listing
+      );
+    } catch (err: any) {
+      error = err.message || 'Error al actualizar el estado de venta';
+    }
+  }
+
   async function deleteListing(listingId: string) {
     if (!confirm('¿Estás seguro de que quieres eliminar esta publicación? Esta acción no se puede deshacer.')) {
       return;
@@ -273,11 +293,16 @@
                       </div>
                     </div>
 
-                    <!-- Status Badge -->
+                    <!-- Status Badges -->
                     <div class="flex items-center gap-2 ml-4">
                       <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {listing.is_active ? 'bg-success-100 text-success-800' : 'bg-surface-100 text-surface-800'}">
                         {listing.is_active ? 'Activa' : 'Inactiva'}
                       </span>
+                      {#if listing.is_sold}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-warning-100 text-warning-800">
+                          Vendido
+                        </span>
+                      {/if}
                     </div>
                   </div>
                 </div>
@@ -301,6 +326,12 @@
                 </div>
 
                 <div class="flex items-center gap-2">
+                  <button
+                    onclick={() => toggleSoldStatus(listing.id, listing.is_sold)}
+                    class="text-sm font-medium {listing.is_sold ? 'text-success-600 hover:text-success-700' : 'text-warning-600 hover:text-warning-700'}"
+                  >
+                    {listing.is_sold ? 'Marcar Disponible' : 'Marcar Vendido'}
+                  </button>
                   <button
                     onclick={() => toggleListingStatus(listing.id, listing.is_active)}
                     class="text-sm font-medium {listing.is_active ? 'text-warning-600 hover:text-warning-700' : 'text-success-600 hover:text-success-700'}"

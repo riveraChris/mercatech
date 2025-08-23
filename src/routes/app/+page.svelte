@@ -6,6 +6,7 @@
   import { CATEGORIES, MUNICIPIOS, CONDITIONS } from '$lib/types';
   import type { Listing } from '$lib/types';
   import ListingCard from '$lib/components/ListingCard.svelte';
+  import SoldItemsCarousel from '$lib/components/SoldItemsCarousel.svelte';
 
   let listings: Listing[] = $state([]);
   let loading = $state(true);
@@ -38,9 +39,10 @@
         .from('listings')
         .select(`
           *,
-          profile:profiles(display_name, municipio, contact_preference, contact_info)
+          profile:profiles(display_name, municipio, contact_preference, contact_info, avatar_url)
         `)
-        .eq('is_active', true);
+        .eq('is_active', true)
+        .eq('is_sold', false);
 
       // Apply filters
       if (selectedCategory) {
@@ -255,6 +257,11 @@
       </div>
     </div>
   </div>
+
+  <!-- Sold Items Carousel -->
+  {#if !searchQuery && !selectedCategory && !selectedCondition && !selectedMunicipio && minPrice === null && maxPrice === null}
+    <SoldItemsCarousel />
+  {/if}
 
   <!-- Results Header -->
   <div class="flex justify-between items-center mb-6">
