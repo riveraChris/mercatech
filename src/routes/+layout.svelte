@@ -13,9 +13,10 @@
 	const requiresAuth = $derived(!$page.url.pathname.startsWith('/auth') && $page.url.pathname !== '/');
 	const isAuthPage = $derived($page.url.pathname.startsWith('/auth'));
 
-	function handleSignOut() {
-		authService.signOut();
+	async function handleSignOut() {
+		await authService.signOut();
 		dropdownOpen = false;
+		goto('/');
 	}
 
 	function navigateToProfile() {
