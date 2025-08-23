@@ -3,6 +3,16 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="light dark" />
+		<style>
+			/* Form inputs always stay light for readability */
+			input, select, textarea {
+				background: white !important;
+				color: #1f2937 !important;
+				-webkit-text-fill-color: #1f2937 !important;
+				border: 1px solid #d1d5db !important;
+			}
+		</style>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
