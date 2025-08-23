@@ -359,7 +359,6 @@
               <div class="flex space-x-2">
                 <!-- Favorite Button -->
                 <button 
-                  aria-label="Agregar a favoritos"
                   onclick={toggleFavorite}
                   disabled={favoriteLoading}
                   class="p-3 rounded-full border border-surface-300 hover:bg-surface-50 transition-colors disabled:opacity-50"
