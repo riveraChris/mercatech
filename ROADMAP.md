@@ -16,9 +16,9 @@ Transform MercaTech into Puerto Rico's premier electronics marketplace with inte
 - [x] Report system with admin notifications
 - [x] Landing page with roadmap
 - [x] Logout redirect to landing page
+- [x] Phone Number Authentication (with Twilio SMS integration)
 
 ### 🚧 **In Progress**
-- [ ] Phone Number Authentication
 - [ ] Seller Profile Pages
 
 ### 📋 **Planned**

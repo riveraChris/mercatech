@@ -84,6 +84,34 @@ class AuthService {
     }
   }
 
+  async signInWithPhone(phone: string) {
+    const { data, error } = await supabase.auth.signInWithOtp({
+      phone: phone
+    });
+    
+    if (error) {
+      console.error('Error signing in with phone:', error);
+      throw error;
+    }
+    
+    return data;
+  }
+
+  async verifyPhoneOtp(phone: string, token: string) {
+    const { data, error } = await supabase.auth.verifyOtp({
+      phone: phone,
+      token: token,
+      type: 'sms'
+    });
+    
+    if (error) {
+      console.error('Error verifying phone OTP:', error);
+      throw error;
+    }
+    
+    return data;
+  }
+
   async signOut() {
     const { error } = await supabase.auth.signOut();
     if (error) {
