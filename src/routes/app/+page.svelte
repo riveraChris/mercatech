@@ -158,8 +158,9 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           <!-- Category Filter -->
           <div>
-            <label class="block text-sm font-medium text-surface-700 mb-2">Categoría</label>
+            <label for="category-select" class="block text-sm font-medium text-surface-700 mb-2">Categoría</label>
             <select 
+              id="category-select"
               bind:value={selectedCategory}
               class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             >
@@ -172,8 +173,9 @@
 
           <!-- Condition Filter -->
           <div>
-            <label class="block text-sm font-medium text-surface-700 mb-2">Condición</label>
+            <label for="condition-select" class="block text-sm font-medium text-surface-700 mb-2">Condición</label>
             <select 
+              id="condition-select"
               bind:value={selectedCondition}
               class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             >
@@ -186,7 +188,7 @@
 
           <!-- Municipality Filter -->
           <div>
-            <label class="block text-sm font-medium text-surface-700 mb-2">Municipio</label>
+            <label for="municipio-select" class="block text-sm font-medium text-surface-700 mb-2">Municipio</label>
             <select 
               bind:value={selectedMunicipio}
               class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -200,7 +202,7 @@
 
           <!-- Price Range -->
           <div>
-            <label class="block text-sm font-medium text-surface-700 mb-2">Precio mínimo</label>
+            <label for="min-price" class="block text-sm font-medium text-surface-700 mb-2">Precio mínimo</label>
             <input 
               type="number" 
               bind:value={minPrice}
@@ -210,7 +212,7 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-surface-700 mb-2">Precio máximo</label>
+            <label for="max-price" class="block text-sm font-medium text-surface-700 mb-2">Precio máximo</label>
             <input 
               type="number" 
               bind:value={maxPrice}
@@ -222,7 +224,7 @@
 
         <!-- Sort Options -->
         <div class="mt-4 pt-4 border-t border-surface-200">
-          <label class="block text-sm font-medium text-surface-700 mb-2">Ordenar por</label>
+          <label for="sort-by" class="block text-sm font-medium text-surface-700 mb-2">Ordenar por</label>
           <div class="flex flex-wrap gap-2">
             <button 
               onclick={() => sortBy = 'newest'}

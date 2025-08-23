@@ -136,9 +136,19 @@
   <!-- Upload Area -->
   <div
     class="border-2 border-dashed rounded-lg p-6 text-center transition-colors {dragActive ? 'border-primary-500 bg-primary-50' : 'border-surface-300 hover:border-surface-400'}"
-    on:drop={handleDrop}
-    on:dragover={handleDragOver}
-    on:dragleave={handleDragLeave}
+    role="button"
+    tabindex="0"
+    aria-label="Área de carga de imágenes. Arrastra archivos aquí o haz clic para seleccionar"
+    ondrop={handleDrop}
+    ondragover={handleDragOver}
+    ondragleave={handleDragLeave}
+    onclick={() => fileInput.click()}
+    onkeydown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        fileInput.click();
+      }
+    }}
   >
     {#if images.length === 0}
       <div class="space-y-4">
@@ -151,7 +161,7 @@
           <p class="text-surface-600 mb-2">Arrastra imágenes aquí o</p>
           <button
             type="button"
-            on:click={() => fileInput.click()}
+            onclick={() => fileInput.click()}
             class="btn variant-outline-primary"
           >
             Seleccionar Archivos
@@ -164,7 +174,7 @@
     {:else}
       <button
         type="button"
-        on:click={() => fileInput.click()}
+        onclick={() => fileInput.click()}
         class="btn variant-outline-primary"
         disabled={images.length >= maxImages}
       >
@@ -183,7 +193,7 @@
     type="file"
     multiple
     accept="image/jpeg,image/jpg,image/png,image/webp"
-    on:change={handleFileSelect}
+    onchange={handleFileSelect}
     class="hidden"
   />
 
@@ -206,9 +216,10 @@
             {#if index > 0}
               <button
                 type="button"
-                on:click={() => moveImage(index, index - 1)}
+                onclick={() => moveImage(index, index - 1)}
                 class="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
                 title="Mover a la izquierda"
+                aria-label="Mover imagen a la izquierda"
               >
                 <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -219,9 +230,10 @@
             <!-- Remove -->
             <button
               type="button"
-              on:click={() => removeImage(index)}
+              onclick={() => removeImage(index)}
               class="p-2 bg-error-500/80 rounded-full hover:bg-error-500 transition-colors"
               title="Eliminar imagen"
+              aria-label="Eliminar imagen"
             >
               <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -232,9 +244,10 @@
             {#if index < images.length - 1}
               <button
                 type="button"
-                on:click={() => moveImage(index, index + 1)}
+                onclick={() => moveImage(index, index + 1)}
                 class="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
                 title="Mover a la derecha"
+                aria-label="Mover imagen a la derecha"
               >
                 <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

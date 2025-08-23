@@ -35,7 +35,8 @@
     checkFavoriteStatus();
   });
 
-  async function toggleFavorite() {
+  async function toggleFavorite(event: Event) {
+    event.preventDefault();
     if (!$auth.user || favoriteLoading) return;
 
     try {
@@ -131,9 +132,10 @@
       <!-- Favorite Button -->
       {#if $auth.user && $auth.user.id !== listing.user_id}
         <button
-          on:click|preventDefault={toggleFavorite}
+          onclick={toggleFavorite}
           disabled={favoriteLoading}
           class="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors disabled:opacity-50"
+          aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
         >
           <svg
             class="h-5 w-5 {isFavorited ? 'text-error-500 fill-current' : 'text-surface-600'}"
@@ -196,6 +198,7 @@
 <style>
   .line-clamp-2 {
     display: -webkit-box;
+    line-clamp: 2;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;

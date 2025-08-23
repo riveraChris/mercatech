@@ -48,6 +48,20 @@
 			dropdownOpen = false;
 		}
 	}
+
+	// Add/remove document click listener based on dropdown state
+	$effect(() => {
+		if (dropdownOpen) {
+			document.addEventListener('click', handleClickOutside);
+		} else {
+			document.removeEventListener('click', handleClickOutside);
+		}
+
+		// Cleanup on component destroy
+		return () => {
+			document.removeEventListener('click', handleClickOutside);
+		};
+	});
 </script>
 
 <svelte:head>
@@ -163,7 +177,7 @@
 		</nav>
 
 		<!-- Main Content -->
-		<main class="flex-1" onclick={handleClickOutside}>
+		<main class="flex-1">
 			{@render children?.()}
 		</main>
 

@@ -421,7 +421,7 @@
 
           <!-- Images -->
           <div>
-            <label class="block text-sm font-medium text-surface-700 mb-2">
+            <label for="images" class="block text-sm font-medium text-surface-700 mb-2">
               Imágenes del producto *
             </label>
             

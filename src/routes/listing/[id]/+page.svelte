@@ -283,6 +283,7 @@
               <button
                 onclick={prevImage}
                 class="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                aria-label="Imagen anterior"
               >
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -292,6 +293,7 @@
               <button
                 onclick={nextImage}
                 class="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                aria-label="Siguiente imagen"
               >
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -359,6 +361,7 @@
                   onclick={toggleFavorite}
                   disabled={favoriteLoading}
                   class="p-3 rounded-full border border-surface-300 hover:bg-surface-50 transition-colors disabled:opacity-50"
+                  aria-label={isFavorited ? 'Quitar de favoritos' : 'Agregar a favoritos'}
                 >
                   <svg
                     class="h-5 w-5 {isFavorited ? 'text-error-500 fill-current' : 'text-surface-600'}"
@@ -374,7 +377,7 @@
                 <button
                   onclick={() => showReportModal = true}
                   class="p-3 rounded-full border border-surface-300 hover:bg-surface-50 transition-colors"
-                  title="Reportar publicación"
+                  aria-label="Reportar publicación"
                 >
                   <svg class="h-5 w-5 text-surface-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
@@ -455,7 +458,7 @@
       
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-surface-700 mb-2">
+          <label for="report-reason" class="block text-sm font-medium text-surface-700 mb-2">
             Razón del reporte *
           </label>
           <select bind:value={reportReason} class="select w-full" required>
@@ -469,7 +472,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-surface-700 mb-2">
+          <label for="report-description" class="block text-sm font-medium text-surface-700 mb-2">
             Descripción adicional
           </label>
           <textarea

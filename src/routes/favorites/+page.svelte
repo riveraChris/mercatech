@@ -241,8 +241,9 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         <!-- Category Filter -->
         <div>
-          <label class="block text-sm font-medium text-surface-700 mb-2">Categoría</label>
+          <label for="category-select" class="block text-sm font-medium text-surface-700 mb-2">Categoría</label>
           <select 
+            id="category-select"
             bind:value={selectedCategory}
             class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           >
@@ -255,8 +256,9 @@
 
         <!-- Condition Filter -->
         <div>
-          <label class="block text-sm font-medium text-surface-700 mb-2">Condición</label>
+          <label for="condition-select" class="block text-sm font-medium text-surface-700 mb-2">Condición</label>
           <select 
+            id="condition-select"
             bind:value={selectedCondition}
             class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           >
@@ -269,8 +271,9 @@
 
         <!-- Municipality Filter -->
         <div>
-          <label class="block text-sm font-medium text-surface-700 mb-2">Municipio</label>
+          <label for="municipio-select" class="block text-sm font-medium text-surface-700 mb-2">Municipio</label>
           <select 
+            id="municipio-select"
             bind:value={selectedMunicipio}
             class="w-full px-3 py-2 border border-surface-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           >
@@ -283,8 +286,9 @@
 
         <!-- Price Range -->
         <div>
-          <label class="block text-sm font-medium text-surface-700 mb-2">Precio mínimo</label>
+          <label for="min-price" class="block text-sm font-medium text-surface-700 mb-2">Precio mínimo</label>
           <input 
+            id="min-price"
             type="number" 
             bind:value={minPrice}
             placeholder="$0"
@@ -293,8 +297,9 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-surface-700 mb-2">Precio máximo</label>
+          <label for="max-price" class="block text-sm font-medium text-surface-700 mb-2">Precio máximo</label>
           <input 
+            id="max-price"
             type="number" 
             bind:value={maxPrice}
             placeholder="Sin límite"
@@ -305,7 +310,7 @@
 
       <!-- Sort Options -->
       <div class="mt-4 pt-4 border-t border-surface-200">
-        <label class="block text-sm font-medium text-surface-700 mb-2">Ordenar por</label>
+        <h3 class="block text-sm font-medium text-surface-700 mb-2">Ordenar por</h3>
         <div class="flex flex-wrap gap-2">
           <button 
             onclick={() => sortBy = 'newest'}
@@ -462,14 +467,14 @@
               </div>
 
               <!-- Seller Info -->
-              {#if listing.profiles}
+              {#if listing.profile}
                 <div class="flex items-center text-sm text-surface-600">
                   <div class="h-6 w-6 rounded-full bg-primary-100 flex items-center justify-center mr-2">
                     <span class="text-xs font-medium text-primary-700">
-                      {listing.profiles.display_name.charAt(0).toUpperCase()}
+                      {listing.profile.display_name.charAt(0).toUpperCase()}
                     </span>
                   </div>
-                  <span class="truncate">{listing.profiles.display_name}</span>
+                  <span class="truncate">{listing.profile.display_name}</span>
                 </div>
               {/if}
             </div>
@@ -483,6 +488,7 @@
 <style>
   .line-clamp-2 {
     display: -webkit-box;
+    line-clamp: 2;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
